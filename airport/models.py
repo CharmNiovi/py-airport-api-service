@@ -69,3 +69,19 @@ class Crew(models.Model):
     def __str__(self):
         return f"{self.last_name} {self.first_name}"
 
+
+class Route(models.Model):
+    source = models.ForeignKey(Airport, on_delete=models.CASCADE, related_name="sources")
+    destination = models.ForeignKey(Airport, on_delete=models.CASCADE, related_name="destinations")
+    distance = models.IntegerField(validators=[MinValueValidator(1)])
+
+    def __str__(self):
+        return f"{self.source} - {self.destination} ({self.distance})"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["source", "destination"],
+                name="unique_route"
+            ),
+        ]
