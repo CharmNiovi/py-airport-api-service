@@ -51,3 +51,13 @@ class City(models.Model):
     class Meta:
         ordering = ("name",)
 
+
+class Airport(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    closest_big_city = models.ForeignKey(
+        City, on_delete=models.SET_NULL, null=True, related_name="airports"
+    )
+
+    def __str__(self):
+        return self.name
+
