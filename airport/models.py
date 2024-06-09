@@ -85,3 +85,12 @@ class Route(models.Model):
                 name="unique_route"
             ),
         ]
+
+
+class Flight(models.Model):
+    crew = models.ManyToManyField(Crew, related_name="flights")
+    route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name="flights")
+    airplane = models.ForeignKey(Airplane, on_delete=models.CASCADE, related_name="flights")
+    departure_time = models.DateTimeField()
+    arrival_time = models.DateTimeField()
+
