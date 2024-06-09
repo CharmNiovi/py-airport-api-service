@@ -98,3 +98,34 @@ class Flight(models.Model):
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(get_user_model(), null=True, on_delete=models.SET_NULL, related_name="orders")
+
+
+class Ticket(models.Model):
+    order = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL, related_name="tickets")
+    flight = models.ForeignKey(Flight, null=True, on_delete=models.SET_NULL, related_name="tickets")
+    row = models.IntegerField(validators=[MinValueValidator(1)])
+    seat = models.IntegerField(validators=[MinValueValidator(1)])
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["flight", "row", "seat"],
+                name="unique_ticket"
+            ),
+        ]
+
+    def validate_row(self):
+        if self.row > self.flight.airplane.rows:
+            raise ValueError("Invalid row number")
+
+    def validate_seat(self):
+        if self.seat > self.flight.airplane.seats_per_row:
+            raise ValueError("Invalid seat number")
+
+    def clean(self, *args, **kwargs):
+        self.validate_row()
+        self.validate_seat()
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
