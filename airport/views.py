@@ -118,3 +118,22 @@ class RouteViewSet(ModelViewSet):
         if self.action in ("retrieve", "list"):
             return RouteWithSlugSerializer
         return RouteSerializer
+
+
+class CrewViewSet(ModelViewSet):
+    permission_classes = (IsAdminOrReadOnly,)
+    authentication_classes = (JWTAuthentication,)
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return CrewDetailSerializer
+        return CrewSerializer
+
+    def get_queryset(self):
+        queryset = Crew.objects.all()
+        if self.action == "retrieve":
+            queryset = queryset.prefetch_related(
+                "flights__route__source",
+                "flights__route__destination",
+            )
+        return queryset
