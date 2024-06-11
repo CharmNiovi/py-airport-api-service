@@ -137,3 +137,30 @@ class CrewViewSet(ModelViewSet):
                 "flights__route__destination",
             )
         return queryset
+
+
+class FlightViewSet(ModelViewSet):
+    permission_classes = (IsAdminOrReadOnly,)
+    authentication_classes = (JWTAuthentication,)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return FlightListSerializer
+        if self.action == "retrieve":
+            return FlightDetailSerializer
+        return FlightSerializer
+
+    def get_queryset(self):
+        queryset = Flight.objects.all()
+        if self.action == "list":
+            queryset = queryset.select_related()
+        if self.action == "retrieve":
+            queryset = queryset.prefetch_related("crew")
+            queryset = queryset.select_related()
+        return queryset
+
+    @action(detail=True, methods=["get"])
+    def tickets(self, request, pk):
+        tickets = self.get_object().tickets.all()
+        serializer = TicketUnableToBuySerializer(tickets, many=True)
+        return Response(serializer.data)
