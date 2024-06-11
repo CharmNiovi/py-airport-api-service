@@ -187,3 +187,18 @@ class CrewNestedSerializer(serializers.ModelSerializer):
         model = Crew
         fields = ("url", "first_name", "last_name")
 
+
+class FlightDetailSerializer(FlightSerializer):
+    #TODO: вільні ticketи
+    crew = CrewNestedSerializer(many=True, read_only=True)
+    route = RouteNestedSerializer(read_only=True)
+    airplane = AirplaneNestedSerializer(read_only=True)
+
+
+class FlightListSerializer(FlightSerializer):
+    route = RouteNestedSerializer(read_only=True)
+
+    class Meta:
+        model = Flight
+        fields = ("departure_time", "arrival_time", "route")
+
