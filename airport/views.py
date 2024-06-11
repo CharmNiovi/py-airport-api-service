@@ -57,3 +57,14 @@ class CountryViewSet(ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     authentication_classes = (JWTAuthentication,)
 
+
+class CityViewSet(ModelViewSet):
+    queryset = City.objects.select_related("country")
+    permission_classes = (IsAdminOrReadOnly,)
+    authentication_classes = (JWTAuthentication,)
+
+    def get_serializer_class(self):
+        if self.action in ("retrieve", "list"):
+            return CityWithSlugSerializer
+        return CitySerializer
+
