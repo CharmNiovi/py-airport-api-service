@@ -189,7 +189,6 @@ class CrewNestedSerializer(serializers.ModelSerializer):
 
 
 class FlightDetailSerializer(FlightSerializer):
-    #TODO: вільні ticketи
     crew = CrewNestedSerializer(many=True, read_only=True)
     route = RouteNestedSerializer(read_only=True)
     airplane = AirplaneNestedSerializer(read_only=True)
