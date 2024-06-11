@@ -96,3 +96,14 @@ class AirplaneViewSet(ModelViewSet):
         if self.action == "retrieve":
             return AirplaneRetrieveSerializer
         return AirplaneSerializer
+
+
+class AirportViewSet(ModelViewSet):
+    queryset = Airport.objects.select_related("closest_big_city")
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return AirportListSerializer
+        if self.action == "retrieve":
+            return AirportDetailSerializer
+        return AirportSerializer
