@@ -21,6 +21,7 @@ urlpatterns = [
     ),
 
     path("accounts/", include("accounts.urls", namespace="accounts")),
+    path("", include("airport.urls", namespace="airport")),
 ]
 
 if DEBUG:
