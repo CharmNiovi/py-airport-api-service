@@ -92,3 +92,14 @@ class AirplaneTypeSerializer(serializers.ModelSerializer):
 class AirplaneTypeDetailSerializer(AirplaneTypeSerializer):
     airplanes = AirplaneNestedSerializer(many=True, read_only=True)
 
+
+class RouteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Route
+        fields = "__all__"
+
+
+class RouteWithSlugSerializer(RouteSerializer):
+    source = serializers.SlugRelatedField(slug_field="name", read_only=True)
+    destination = serializers.SlugRelatedField(slug_field="name", read_only=True)
+
