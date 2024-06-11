@@ -107,3 +107,14 @@ class AirportViewSet(ModelViewSet):
         if self.action == "retrieve":
             return AirportDetailSerializer
         return AirportSerializer
+
+
+class RouteViewSet(ModelViewSet):
+    queryset = Route.objects.select_related("source", "destination")
+    permission_classes = (IsAdminOrReadOnly,)
+    authentication_classes = (JWTAuthentication,)
+
+    def get_serializer_class(self):
+        if self.action in ("retrieve", "list"):
+            return RouteWithSlugSerializer
+        return RouteSerializer
