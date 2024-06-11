@@ -1,6 +1,8 @@
+from rest_framework.serializers import ValidationError
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.urls import reverse
 
 
 class AirplaneType(models.Model):
@@ -18,6 +20,17 @@ class Airplane(models.Model):
                                       on_delete=models.CASCADE,
                                       related_name="airplanes")
 
+    def __str__(self):
+        return self.name
+
+    @property
+    def capacity(self):
+        return self.rows * self.seats_per_row
+
+    @property
+    def get_airplane_type_pk(self):
+        return self.airplane_type.pk
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -25,13 +38,6 @@ class Airplane(models.Model):
                 name="unique_airplane"
             ),
         ]
-
-    def __str__(self):
-        return self.name
-
-    @property
-    def capacity(self):
-        return self.rows * self.seats_per_row
 
 
 class Country(models.Model):
@@ -109,18 +115,18 @@ class Ticket(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["flight", "row", "seat"],
+                fields=["flight", "row", "seat", "order"],
                 name="unique_ticket"
             ),
         ]
 
     def validate_row(self):
         if self.row > self.flight.airplane.rows:
-            raise ValueError("Invalid row number")
+            raise ValidationError({"row": "Invalid row number"})
 
     def validate_seat(self):
         if self.seat > self.flight.airplane.seats_per_row:
-            raise ValueError("Invalid seat number")
+            raise ValidationError({"seat": "Invalid seat number"})
 
     def clean(self, *args, **kwargs):
         self.validate_row()
