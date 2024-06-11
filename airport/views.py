@@ -68,3 +68,18 @@ class CityViewSet(ModelViewSet):
             return CityWithSlugSerializer
         return CitySerializer
 
+
+class AirplaneTypeViewSet(ModelViewSet):
+    permission_classes = (IsAdminOrReadOnly,)
+    authentication_classes = (JWTAuthentication,)
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return AirplaneTypeDetailSerializer
+        return AirplaneTypeSerializer
+
+    def get_queryset(self):
+        queryset = AirplaneType.objects.all()
+        if self.action == "retrieve":
+            return queryset.prefetch_related("airplanes")
+        return queryset
