@@ -220,3 +220,17 @@ class TicketUnableToBuySerializer(serializers.ModelSerializer):
         fields = ("row", "seat")
         read_only_fields = ("row", "seat")
 
+
+class OrderAdminSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Order
+        fields = "__all__"
+
+
+class OrderUserSerializer(OrderAdminSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+
+class OrderDetailSerializer(OrderUserSerializer):
+    tickets = TicketDetailSerializer(many=True, read_only=True)
