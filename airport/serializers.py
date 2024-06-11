@@ -103,3 +103,30 @@ class RouteWithSlugSerializer(RouteSerializer):
     source = serializers.SlugRelatedField(slug_field="name", read_only=True)
     destination = serializers.SlugRelatedField(slug_field="name", read_only=True)
 
+
+class AirportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Airport
+        fields = "__all__"
+
+
+class AirportListSerializer(AirportSerializer):
+    closest_big_city = serializers.SlugRelatedField(
+        slug_field="name",
+        read_only=True
+    )
+
+
+class AirportDetailSerializer(serializers.ModelSerializer):
+    sources = RouteWithSlugSerializer(
+        many=True,
+        read_only=True
+    )
+    destinations = RouteWithSlugSerializer(
+        many=True,
+        read_only=True
+    )
+
+    class Meta:
+        model = Airport
+        fields = "__all__"
