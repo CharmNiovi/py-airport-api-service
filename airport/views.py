@@ -182,3 +182,35 @@ class TicketViewSet(ModelViewSet):
         if self.action == "retrieve":
             return TicketDetailSerializer
         return TicketSerializer
+
+
+class OrderViewSet(
+    GenericViewSet,
+    ListModelMixin,
+    RetrieveModelMixin,
+    CreateModelMixin,
+    DestroyModelMixin
+):
+    permission_classes = (OrderSpecialPermission,)
+    authentication_classes = (JWTAuthentication,)
+
+    def get_queryset(self):
+        queryset = Order.objects.all()
+        user = self.request.user
+
+        if self.action == "retrieve":
+            queryset = queryset.prefetch_related(
+                "tickets__flight__route__source",
+                "tickets__flight__route__destination",
+            )
+        if user.is_staff or user.is_superuser:
+            return queryset
+        return queryset.filter(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return OrderDetailSerializer
+        user = self.request.user
+        if user.is_staff or user.is_superuser:
+            return OrderAdminSerializer
+        return OrderUserSerializer
