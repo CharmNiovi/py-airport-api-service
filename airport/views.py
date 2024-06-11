@@ -83,3 +83,16 @@ class AirplaneTypeViewSet(ModelViewSet):
         if self.action == "retrieve":
             return queryset.prefetch_related("airplanes")
         return queryset
+
+
+class AirplaneViewSet(ModelViewSet):
+    queryset = Airplane.objects.select_related("airplane_type")
+    permission_classes = (IsAdminOrReadOnly,)
+    authentication_classes = (JWTAuthentication,)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return AirplaneListSerializer
+        if self.action == "retrieve":
+            return AirplaneRetrieveSerializer
+        return AirplaneSerializer
