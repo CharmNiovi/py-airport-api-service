@@ -82,3 +82,13 @@ class AirplaneNestedSerializer(serializers.ModelSerializer):
         model = Airplane
         fields = ("id", "name", "capacity", "url")
 
+
+class AirplaneTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AirplaneType
+        fields = "__all__"
+
+
+class AirplaneTypeDetailSerializer(AirplaneTypeSerializer):
+    airplanes = AirplaneNestedSerializer(many=True, read_only=True)
+
