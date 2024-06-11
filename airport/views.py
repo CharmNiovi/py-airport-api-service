@@ -164,3 +164,21 @@ class FlightViewSet(ModelViewSet):
         tickets = self.get_object().tickets.all()
         serializer = TicketUnableToBuySerializer(tickets, many=True)
         return Response(serializer.data)
+
+
+class TicketViewSet(ModelViewSet):
+    serializer_class = TicketSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (JWTAuthentication,)
+
+    def get_queryset(self):
+        queryset = Ticket.objects.select_related()
+        user = self.request.user
+        if user.is_staff or user.is_superuser:
+            return queryset
+        return queryset.filter(order__user=user)
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return TicketDetailSerializer
+        return TicketSerializer
