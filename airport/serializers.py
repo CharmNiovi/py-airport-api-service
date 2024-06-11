@@ -130,3 +130,60 @@ class AirportDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Airport
         fields = "__all__"
+
+
+class CrewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Crew
+        fields = "__all__"
+
+
+class RouteNestedSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name="airport:route-detail",
+        lookup_field="pk",
+        read_only=True
+    )
+    source = serializers.SlugRelatedField(slug_field="name", read_only=True)
+    destination = serializers.SlugRelatedField(slug_field="name", read_only=True)
+
+    class Meta:
+        model = Route
+        fields = ("source", "destination", "url")
+
+
+class FlightNestedSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name="airport:flight-detail",
+        lookup_field="pk",
+        read_only=True
+    )
+    route = RouteNestedSerializer(read_only=True)
+
+    class Meta:
+        model = Flight
+        fields = ("url", "route")
+
+
+class CrewDetailSerializer(CrewSerializer):
+    flights = FlightNestedSerializer(many=True, read_only=True)
+
+
+class FlightSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Flight
+        fields = "__all__"
+
+
+class CrewNestedSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name="airport:crew-detail",
+        lookup_field="pk",
+        read_only=True
+    )
+
+    class Meta:
+        model = Crew
+        fields = ("url", "first_name", "last_name")
+
