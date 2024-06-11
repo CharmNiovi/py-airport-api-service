@@ -202,3 +202,21 @@ class FlightListSerializer(FlightSerializer):
         model = Flight
         fields = ("departure_time", "arrival_time", "route")
 
+
+class TicketSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Ticket
+        fields = "__all__"
+
+
+class TicketDetailSerializer(TicketSerializer):
+    flight = FlightNestedSerializer(read_only=True)
+
+
+class TicketUnableToBuySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = ("row", "seat")
+        read_only_fields = ("row", "seat")
+
