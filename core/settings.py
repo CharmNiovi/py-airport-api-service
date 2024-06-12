@@ -1,3 +1,4 @@
+import os
 from datetime import timedelta
 from pathlib import Path
 
@@ -14,7 +15,9 @@ SECRET_KEY = "django-insecure-m(uqrz4$)9p1w5o=^u@tmsa3mv4*@&+=)w%8d$tyoh8#^bd%rr
 # SECURITY WARNING: don"t run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "0.0.0.0"
+]
 
 INTERNAL_IPS = []
 
@@ -72,8 +75,12 @@ WSGI_APPLICATION = "core.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST"),
+        "PORT": os.getenv("POSTGRES_PORT", 5432),
     }
 }
 
@@ -139,7 +146,8 @@ SIMPLE_JWT = {
 
 # Django Debug Toolbar
 DEBUG_TOOLBAR_CONFIG = {
-    "IS_RUNNING_TESTS": False
+    "IS_RUNNING_TESTS": False,
+    'SHOW_TOOLBAR_CALLBACK': lambda x: True,
 }
 
 if DEBUG:
