@@ -48,7 +48,7 @@ from airport.serializers import (
     TicketDetailSerializer,
     TicketUnableToBuySerializer,
 )
-from core.permissions import IsAdminOrReadOnly, OrderSpecialPermission
+from core.permissions import IsAdminOrReadOnly, UserCantUpdateAndDeletePermission
 
 
 class CountryViewSet(ModelViewSet):
@@ -100,6 +100,8 @@ class AirplaneViewSet(ModelViewSet):
 
 class AirportViewSet(ModelViewSet):
     queryset = Airport.objects.select_related("closest_big_city")
+    permission_classes = (IsAdminOrReadOnly,)
+    authentication_classes = (JWTAuthentication,)
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -168,7 +170,7 @@ class FlightViewSet(ModelViewSet):
 
 class TicketViewSet(ModelViewSet):
     serializer_class = TicketSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, UserCantUpdateAndDeletePermission)
     authentication_classes = (JWTAuthentication,)
 
     def get_queryset(self):
@@ -191,7 +193,7 @@ class OrderViewSet(
     CreateModelMixin,
     DestroyModelMixin
 ):
-    permission_classes = (OrderSpecialPermission,)
+    permission_classes = (IsAuthenticated, UserCantUpdateAndDeletePermission,)
     authentication_classes = (JWTAuthentication,)
 
     def get_queryset(self):
