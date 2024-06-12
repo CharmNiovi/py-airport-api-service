@@ -137,6 +137,11 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
 }
 
+# Django Debug Toolbar
+DEBUG_TOOLBAR_CONFIG = {
+    "IS_RUNNING_TESTS": False
+}
+
 if DEBUG:
     INSTALLED_APPS += ["debug_toolbar"]
     MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
